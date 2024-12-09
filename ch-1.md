@@ -1,3 +1,5 @@
+## today's security professional
+
 - CIA triad
 	- confidentiality
 		- unauthorized individuals can't gain access to sensitive info 
