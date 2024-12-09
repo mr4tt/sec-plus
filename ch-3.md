@@ -1,0 +1,101 @@
+## malicious code
+
+- malware
+	- software designed to cause harm to system, devices, networks, or users
+	- command and control (C&C) techniques and systems 
+		- allows attackers to tell systems what to do 
+		- groups of these are botnets; individual systems are bots
+	- ransomware
+		- significant portion is from phishing
+		- IoCs (indicators of compromise)
+			- command and control (c&c) traffic and/or contact to known malicious ip addresses
+			- use of legit tools in abnormal ways 
+			- lateral movement that seeks to attack / gain info about other systems / devices
+			- file encryption
+			- ransom demands
+			- data exfil behavior
+		- mitigation: effective backup
+	- trojans
+		- malware disguised as legit software
+		- IoCs
+			- malware signatures
+			- folders / files created on device
+			- c&c system hostnames and ip addresses
+		- RATs (remote access trojan)
+			- provides attackers with remote access to systems
+		- mitigation: awareness 
+	- worms
+		- malware that spreads itself
+		- self install rather than requiring users to click
+		- can spread via attacks on vulnerable systems, email, IoT, phones, etc
+		- IoCs
+			- known malicious files
+			- downloads additional components from remote systems
+			- c&c contact to remote systems
+			- malicious behavior using system cmds for injection, like cmd, msiexec, etc
+		- mitigation
+			- network level controls preventing infection traffic 
+				- firewalls, IPS devices, network segmentation, etc
+				- patching, limiting attack surfaces
+	- spyware 
+		- malware designed to obtain info about an individual, org, or system
+		- many track user's browsing habits, installed software, etc and report it back to central servers
+		- associated with stalkerware
+		- IoCs
+			- remote access and remote access indicators
+			- known software file fingerprints
+			- malicious processes (often disguised as system processes)
+			- injection attack against browsers
+		- mitigation
+			- user awareness
+			- antimalware tools
+	- bloatware
+		- unwanted applications from manufacturers 
+		- remove to prevent issues like taking up disk space, memory, CPU cycles 
+	- viruses
+		- malware that self-copy and self-replicate **once activated**
+			- unlike worms, they don't spread via vulnerable services and networks (viruses need a host, worms act independently)
+		- spread via mechanisms like copying to a USB; usually also have a search capability to find new places to spread once run 
+		- typically have a trigger (when does the virus execute?) and a payload (what does the virus do?)
+		- types
+			- memory resident viruses
+				- remain in memory while the system is running
+			- nonmemory resident viruses
+				- execute, spread, then shut down
+			- boot sector viruses
+				- reside in boot sector of a drive / storage media 
+			- macro viruses 
+				- use macros / code inside software to spread (ex: word, excel)
+			- email viruses
+				- spread via email (either as email attachments or part of the email itself through email client flaws
+		- fileless viruses inject themselves into memory and do stuff, including adding the ability to reinfect the system via the same process at reboot through a registry entry or other technique 
+		- IoC
+			- available in threat feeds from orgs like VirusTotal
+		- mitigation
+			- ensure software is updated
+			- antimalware tools
+			- IPSs
+			- awareness
+	- keyloggers
+		- capture keystrokes from keyboard (+ potentially other input like card swipes, mouse movement)
+		- can be a tool capturing data from the kernel, APIs / scripts, or from memory
+		- mitigation
+			- patching, antimalware, multifactor auth
+		- IoCs
+			- file hashes and signatures
+			- exfiltration activity to cc&c systems
+			- process names
+			- known reference urls
+	- logic bombs
+		- malicious functions of code inside other programs that activate when set conditions are met
+		- IoCs
+			- found in code review
+	- rootkits
+		- malware designed to allow attackers to access a system through a backdoor
+		- many also conceal the rootkit from detection
+			- ex: hooking filesystem drivers to ensure users can't see the files; infecting start up code in the master boot record (MBR) of a disk
+		- IoCs
+			- file hashes / signatures
+			- c&c domains, ip addresses, and systems
+			- behavior like creating services, exes, config changes, file access, cmd invocation
+			- opening ports / creating reverse proxy tunnels
