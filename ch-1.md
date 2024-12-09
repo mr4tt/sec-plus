@@ -1,0 +1,118 @@
+- CIA triad
+	- confidentiality
+		- unauthorized individuals can't gain access to sensitive info 
+		- eg: firewalls / ACLs / encryption
+	- integrity
+		- ensure there's no unauthorized modifications to info / systems, either intentionally or unintentionally 
+		- eg: hashing / integrity monitoring solutions 
+	- availability 
+		- ensure info / systems are ready to meet legitimate user needs when they request it 
+		- eg: fault tolerance, clustering, backups 
+	- nonrepudiation
+		- if someone performs an action (eg: sending a msg), they can't deny having taken it 
+		- eg: digital signatures
+	- security incidents occur when this triad is breached
+- DAD triad: 3 key threats to cyber 
+	- disclosure
+		- exposure of sensitive info to unauthorized individuals
+		- aka data loss
+		- data exfiltration: when attackers gain access to sensitive info and remove it from the org
+	- alteration
+		- unauthorized modification of info
+		- eg: modifying financial records, solar flare bit flip, typo
+	- denial
+		- disrupting legitimate user's access to info
+		- eg: DDoS, server failure, natural disaster 
+
+- Impacts of breaches
+	- financial risk 
+	- reputational risk
+	- strategic risk
+		- risk an org will be less effective in meeting its goals as a result 
+		- eg: if competitors gain access to the plans, they could bring competing products to market quickly 
+	- operational risk
+		- risk to org's ability to carry out day to day functions
+	- compliance risk
+		- risk to org's compliance to legal / regulatory requirements
+
+- implementing security controls
+	- security controls: specific measures will an org take to protect CIA triad
+	- control objectives: statements of a desired security state
+	- gap analysis
+		- during a gap analysis, review control objectives for an org / system / service and examine controls designed to achieve those objectives 
+			- gap: when controls do not meet control objective 
+	- $\star$ security control categories
+		- technical controls
+			- ex: ACLs, firewall rules, encryption
+		- operational controls
+			- ex: user access reviews, log monitoring, vuln management
+		- managerial controls
+			- ex: risk assessments, security planning exercises, project management practices
+		- physical controls
+			- ex: fences, locks, alarms
+	- $\star$ security control types
+		- preventive controls
+			- stop security issues before occurring
+			- ex: firewalls, encryption
+		- deterrent controls
+			- prevent attackers from attempting to violate security policies
+			- ex: guard dogs, barbed wire
+		- detective controls
+			- identify security events that have happened
+			- ex: intrusion detection systems
+		- corrective controls
+			- remediate security issues that happened 
+			- ex: restoring backups 
+		- compensating controls
+			- mitigate risk associated with exceptions made to a security policy
+			- ex: org needs to use an outdated program, so they put the program in an isolated box
+			- PCI DSS (payment card industry data security standard) includes a formal compensating control process; has 3 criteria that has to be met for a compensating control to be satisfactory
+				- control must meet intent + rigor of original requirement
+				- must provide a similar level of defense as original requirement (enough to offset original risk)
+				- control must be "above and beyond" other PCI DSS requirements
+		- directive controls 
+			- inform employees what to do to achieve security objectives 
+			- ex: policies, procedures
+- data protection
+	- data at rest
+	- data in transit
+		- data in motion / transit over a network
+	- data in use
+	- encrypt your data
+	- data loss prevention (DLP)
+		- data loss prevention systems help orgs enforce info handling policies 
+		- these systems search for sensitive info that might be unsecured and monitor network traffic for attempts to remove sensitive info 
+		- can block or automatically encrypt traffic w/ sensitive info 
+		- agent based DLP 
+			- software that searches computers for presence of sensitive info 
+			- also monitors system configs and user actions 
+		- agentless (network based) DLP
+			- dedicated devices that sit on networks and monitor outbound traffic 
+		- methods of action:
+			- pattern matching
+				- ex: blocks anything that is formatted like a credit card # / SSN or has a term like "top secret"
+			- watermarking 
+				- electronic tabs have previously been applied to sensitive docs and DLP monitoring for those tags
+				- commonly used in DRM 
+	- data minimization
+		- reducing risk by reducing amt of maintained sensitive info 
+		- deidentification 
+			- removing ability to link data back to an individual
+		- data obfuscation
+			- transforming data into a format where original info can't be retrieved
+			- methods:
+				- hashing
+				- tokenization
+					- replace sensitive values with UID using a lookup table (which needs to also be secure)
+				- masking
+					- partially redacting sensitive info 
+	- access restrictions
+		- security measures that limit ability to access sensitive info / resources
+		- ex: geographic restrictions
+			- ex: only users in a certain country can access a db 
+		- ex: permission restrictions
+			- limit access to resources based on user's role / level of authorization
+	- segmentation
+		- places sensitive systems on separate networks 
+	- isolation
+		- cut off system from access to / from outside networks
