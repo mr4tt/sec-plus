@@ -1,0 +1,168 @@
+## identity and access management
+
+- identity
+	- identities are sets of claims made about a subject
+	- linked to information about the subject
+	- common ways to claim an identity:
+		- usernames
+		- certificates
+		- tokens
+		- ssh keys
+		- smartcards
+- authentication and authorization
+	- AAA: authentication, authorization, and accounting
+		- authentication: verifies user's identity
+		- authorization: determine the level of access the user has and grants ability to do stuff / access stuff
+		- accounting: maintaining  
+	- authentication and authorization techniques
+		- EAP (extensible authentication protocol)
+			- commonly for wireless networks
+			- many diff implementations, like EAP-TLS, LEAP, EAP-TTLS
+		- CHAP (challenge handshake authentication protocol)
+			- uses an encrypted challenge and three way handshake to send credentials 
+		- 802.1X 
+			- an IEEE standard for network access control (NAC)
+			- used for auth for devices that want to connect to a network
+			- users send auth requests to a switch / access point / wireless controller 
+			- those controllers connect to an authentication server (usually via RADIUS)
+			- RADIUS relies on a backend directory (LDAP, AD) as a source of identity info 
+		- RADIUS (remote authentication dial in user service)
+			- common authentication, authorization, and accounting (AAA) system for network devices, wireless networks, and other services
+			- use TCP or UDP
+			- client-server model 
+			- sends passwords by a shared secret and MD5 hash (password security not very strong)
+		- TACACS+ (terminal access controller access control system)
+			- uses TCP for AAA services 
+		- Kerberos
+			- protocol for authenticating service requests between trusted hosts on an untrusted network (eg: internet) 
+			- Kerberos users have 3 elements
+				- primary (username)
+				- instance (helps differentiate similar primaries)
+				- realms (groups of users)
+					- these are separated by trust boundaries and have distinct Kerberos key distribution centers (KDCs)
+			- to use Kerberos, the client requests an authentication ticket, aka ticket granting ticket (TGT)
+			- the auth server checks your credentials and responds with the TGT
+				- TGT encrypted with secret key of the ticket granting service (TGS)
+					- TGS is also usually the KDC
+			- when you want to use a service, you send the TGT to the TGS and include the name of the resource you want to use 
+				- TGS then sends a valid session key for the service, which you can send to the service to use 
+		- single sign on (SSO)
+			- allows users to log in w/ a single identity and use multiple systems / services 
+			- LDAP (lightweight directory access protocol)
+				- offer hierarchically organized info about the org
+			- some other technologies for authentication and authorization are:
+				- SAML (security assertion markup language)
+					- XML based open standard for exchanging AA info 
+					- often used between identity providers and service providers
+				- OpenID
+					- open standard for decentralized auth
+					- OpenID identity providers can be leveraged for third party sites w/ established identities
+					- ex: sign in with google button
+					- IdPs: openID identity providers
+					- relying parties (RPs) redirect auth requests to IdPs 
+				- OAuth
+					- open standard for auth 
+					- provides a method for users to determine what information to provide to third party apps / sites w/o providing credentials
+					- ex: zoom requesting access to calendar with a list of permissions it needs
+		- federation
+			- in many orgs, identity info is handled by an identity provider (IdP)
+			- identity providers manage the life cycle of digital identities 
+			- IdP are often part of federated identity deployments, where they are paired with relying parties, which trust the IdP to handle auth
+			- common terms in federated environments 
+				- principal (a user)
+				- identity providers (IdPs): provide identity and auth services via an attestation process, where the IdP validates the user is who they claim to be 
+				- service providers (SPs): provide services to users whos identities who have been attested to by IdP
+					- alternatively, relying party (RP)
+- auth methods
+	- passwords
+		- use show password to prevent typos
+		- use password managers 
+		- use salts and hashes 
+		- MFA
+		- reduce password complexity requirements and emphasize length
+		- allow pasting
+		- monitoring new passwords to ensure easily compromised passwords aren't used
+		- eliminating password hints
+	- passwordless
+		- auth relies on something you have 
+		- eg: security key (hardware device)
+	- MFA
+		- something you know
+		- something you have
+		- something you are
+		- somewhere you are
+	- one time passwords
+		- TOTP (time based one time pass)
+			- use the current time to make a one time pass
+		- HOTP (HMAC based one time pass)
+			- HMAC: hash based message auth codes
+			- uses a seed value that both the validator server and token use, as well as a moving factor
+				- this could be the number of button presses
+		- sms code
+		- phone call code
+		- static codes (like printed on paper)
+	- biometrics
+		- fingerprints
+		- retina scanning
+		- face recognition
+		- Type I errors (false rejection rate; FRR)
+			- legit biometrics were seen as wrong
+		- Type II errors (false acceptance rate; FAR)
+		- ROC (receiver operating characteristic)
+			- graph to compare FRR against FAR 
+	- accounts
+		- account types
+			- user accounts
+			- privileged or admin accounts
+			- shared and generic accounts / credentials 
+				- usually prohibited b/c hard to logging 
+			- guest accounts
+			- service accounts
+				- associated with applications and services 
+		- provisioning and deprovisioning accounts
+			- identity proofing: process of ensuring the person who the account is for is actually that person 
+			- ex: showing govt ID
+			- permission creep: over time, users keep getting more permissions 
+			- privileged access management (PAM)
+				- handle admin and privileged accounts 
+				- help ensure least privilege for the accounts 
+				- some PAM tools:
+					- JIT (just in time) permissions: permissions granted and revoked only when needed
+						- users can "check out" permissions, which last for n time
+					- password vaulting
+						- allow privileged credentials to be checked out for n time
+					- ephemeral accounts
+						- temporary accounts with limited lifespans 
+- access control schemes
+	- access control schemes determine which users / services / programs can access files or other objects
+	-  mandatory access control (MAC) systems
+		- rely on OS to enforce policy set by security policy admin 
+		- ex: SELinux
+	- discretionary access control (DAC)
+		- most common: owners for objects, then owner delegates rights and permissions 
+	- role based access control (RBAC)
+		- roles are matched with privileges 
+		- 3 main rules 
+			- role assignment
+				- subjects can only use permissions that match a role they've been assigned
+			- role authorization
+				- subject's active role must be authorized for the subject
+			- permission authorization
+				- subjects can only use permissions their active role is allowed to use
+	- rule based access control (RBAC also .-. or RuBAC)
+		- applied using rules or ACLs for different objects / resources
+		- when an attempt is made to access the object, the rule is checked 
+		- ex: firewall ruleset
+	- attribute based access control (ABAC)
+		- policies are driven by attributes of the users
+		- can be flexible but complex to manage
+	- time of day restrictions: limit when activities can occur 
+	- least privilege: the concept that accounts and users should only be given the minimum set of permissions and capabilities necessary to perform their role or job function
+- file system permissions
+	- $\star$ linux: drwxrwxrwx
+		- shows whether it's a directory or file, then displaying user, group, and world / other permissions
+		- ![Pasted image 20240911103923](https://github.com/user-attachments/assets/5dc01fa3-7d23-4a58-8648-90365de5bec6)
+		- x -> 1, w -> 2, r -> 4
+			- add to make the rest of them 
+	- windows
+		- full control, modify, read and execute, read, write
