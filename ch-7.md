@@ -1,0 +1,252 @@
+## cryptography and PKI
+
+- cryptography: encoding info so it can't get decoded w/o a key
+	- encryption: plaintext -> ciphertext
+	- decryption: ciphertext -> plaintext
+- history of crypto
+	- substitution cipher
+	- polyalphabetic substitution
+		- ex: vigenere cipher (use a keyword to look up cipher text)
+	- transposition cipher
+		- transposing / scrambling letters
+			- Beams -> amsBe
+	- enigma machine
+		- a type of polyalphabetic substitution w/ keyword
+	- steganography
+		- using cryptographic techniques to embed secret messages in another file
+- goals of cryptography
+	- confidentiality, integrity, authentication, nonrepudiation
+	- confidentiality
+		- data reminds private
+		- cryptosystem: specific implementations of a code / cipher in hardware and software
+		- symmetric cryptosystems: shared secret key
+		- asymmetric cryptosystems: combination of public and private keys 
+		- encrypting data on disk):
+			- full disk encryption (FDE): all data on hard drive is automatically encrypted 
+				- however, unencrypted once booted, so the data is vulnerable when the disk is running
+			- partition encryption: a specific partition is automatically encrypted
+			- file level encryption
+			- volume encryption (specific files / folders)
+		- encrypting database data
+			- 2 types of database encryption
+				- transparent data encryption (TDE): encrypts entire db
+				- column level encryption (CLE): encrypts specific columns 
+			- record level encryption
+				- encrypts individual records in a db
+	- integrity
+		- ensures data isn't altered w/o authorization
+		- message integrity enforced through digital signatures
+	- authentication
+		- verifies claimed identity of system users
+	- nonrepudiation
+		- assures recipient that message was originated by sender and not an imposter 
+		- prevents sender from repudiating the message (claiming they didn't send it)
+- cryptographic concepts
+	- P: plaintext, C: ciphertext
+	- cryptographic keys
+		- each algo has a key space: range of values that are valid to use as a key
+			- key space has a key length: number of binary bits (0, 1) are in the key
+			- key space is range of numbers from 0 to 2^n, where n is the bit size of the key
+			- 128-bit key length can have 0 to 2^128 key space
+		- kerckhoffs' principle: a cryptographic system should be secure even if the algorithm is public
+	- ciphers
+		- ciphers: algos used for encryption and decryption
+		- cipher suites: sets of ciphers and key lengths supported by a system 
+		- block ciphers
+			- operate on chunks / blocks of a message and encrypt an entire message block at once
+		- stream ciphers
+			- operate on one char / bit of a message at once
+- modern crypto
+	- symmetric key algorithms
+		- aka secret key cryptography and private key cryptography
+		- sender and recipient both have a shared key used for both decryption and encryption
+		- weaknesses:
+			- key exchange; parties must have a secure way of exchanging the secret key before using it
+			- no nonrepudition; can't prove where a message originated
+			- algorithm is not scalable, difficult to use for large groups
+			- keys must be regenerated often (all keys known by someone who leaves must be deleted)
+		- strength: very very fast
+	- asymmetric key algorithms
+		- aka public key algorithms
+		- each user has a public key (shared between everyone) and a private key (only known to one person)
+		- if a public key encrypts a message, only a corresponding private key can decrypt and vice versa
+		- also provide support for digital signature technology
+		- strengths
+			- scalable: addition of new users requires generation of only one public-private key pair 
+				- this same key pair is used to communicate with all users of the asymmetric cryptosystem
+			- easy to remove users; simply cancel their key
+			- key regeneration only required if a user's private key is compromised
+			- provide integrity, authentication, and nonrepudition
+			- easy key exchange, simply make their private key available
+		- weakness: slow
+			- many systems use asymmetric key algos to exchange symmetric private keys, then communicate with symmetric key
+	- hashing algos
+		- collisions bad, occurs when the algo provides the same hash for two different inputs
+- symmetric crypto
+	- data encryption standard (DES)
+		- made by govt in 1977, not secure now
+	- triple DES (3DES)
+		- DES but 3x (and with 3 diff keys), also not secure
+	- advanced encryption standard (AES)
+		- this cipher has 3 allowed 3 key strengths: 128 bits, 192 bits, and 256 bits
+			- number of encryption rounds depends on the key length chosen; 
+			- 128-bit keys require 10 rounds of encryption; 192-bit keys require 12 rounds of encryption; 256-bit keys require 14 rounds of encryption
+	- symmetric key management
+		- key management practices: security measures 
+		- creation and distribution
+			- offline distribution
+			- public key encryption
+				- set up public key distribution to exchange symmetric key, then use symmetric key
+			- diffie-hellman
+		- storage and destruction of symmetric keys
+			- never store an encryption key on the same system where encrypted data resides
+			- split knowledge: split key between 2 people 
+		- key escrow and recovery
+			- key escrow: 3rd party store a protected copy of the key 
+			- key recovery policy to get the key
+- asymmetric crypto
+	- RSA
+		- relies on the difficulty of factoring large prime numbers 
+	- ECC (elliptic curve cryptography)
+		- given an elliptic curve y^2 = x^3 + ax + b
+		- the elliptic curve group is made of the points on the curve
+		- two points with the same elliptic curve group (P and Q) can be added together (P + Q)
+		- assuming Q is a multiple of P, Q = xP
+		- Hard to find x, even if P and Q are already known 
+- hash functions
+	- message digest: aka the hash value, checksum, CRC, digital ID
+	- 5 basic requirements for a hash function
+		- accept input of any length
+		- produce output of a fixed length
+		- hash value is relatively easy to compute
+		- hash function is one way 
+		- collision free 
+	- SHA
+		- SHA-1, SHA-2, SHA-3 
+	- MD5
+		- subject to collisions 
+- digital signatures
+	- goals: 
+		- digitally signed messages ensure the recipient that the message actually came from the claimed sender (nonrepudiation)
+		- assure the recipient the message wasn't altered in transit
+	- rely on both public key cryptography and hashing
+	- use public key to decrypt the hash and ensure the hash matches the message, as only the right private key can encrypt a msg that can be decoded by the public key
+	- HMAC (hash based message authentication code)
+		- implements a partial digital signature 
+			- guarantees integrity of msg, but not nonrepudiation (b/c it relies on a shared secret key)
+- PKI (public key infrastructure)
+	- certificates
+		- digital certs: endorsed copies of a public key
+		- signed (endorsed) certs must be from a trusted CA (certificate authority)
+		- assure all parties that others are who they claim to be 
+		- certs are governed by X.509 and contain:
+			- version of X.509 
+			- serial number (from cert creator)
+			- signature's algorithm identifier 
+			- issuer name
+			- validity period
+			- subject's common name (CN) that clearly describes cert owner (ex: certmike.com)
+			- optionally: Subject alternative names (SANs) that specify additional addresses protected by the cert (ex: ip addresses, domain names)
+			- subject's public key
+	- certificate authorities (CAs)
+		- organizations that will sign your cert
+		- registration authorities (RAs)
+			- verify users' identities for CAs
+		- they use an offline CA to protect their root certificate (top level certificate)
+			- the offline CA uses the root cert to create intermediate certs, which serve online CAs
+			- certificate chaining: using series of intermediate CAs
+	- certificate generation and destruction
+		- enrollment
+			- prove your identity to the CA
+			- provide them your public key in a certificate signing request (CSR)
+			- CA creates a X.509 cert and signs it with the CA's private key
+				- types of certs:
+					- domain validation (DV) cert: CA verifies the certificate subject has control of the domain name 
+					- extended validation (EV) cert: CA takes steps to ensure the certificate owner is a legitimate business before issuing the cert
+		- verification
+			- when you receive a digital cert:
+				- verify the cert by checking the CA's digital signature by using the CA's public key
+				- check the cert wasn't revoked using a certificate revocation list (CRL) or the online certificate status protocol ( OCSP)
+				- now, we can assume the cert is authentic if:
+					- digital signature of CA is authentic
+					- you trust the CA
+					- cert is not on a CRL 
+					- the cert actually contains the data you're trusting
+						- ex: if the cert only has billy@foo.com, you can be sure that the owner of this email address owns the url but you don't know if its actually billy
+			- certificate pinning: browsers attach a cert / public key to a subject for an extended period of time
+				- will notify you if cert changes unexpectedly 
+		- revocation
+			- happens if:
+				- certificate was compromised (eg: private key leaked)
+				- certificate was erroneously issues (eg: CA didn't verify user)
+				- cert detail's changed (eg: name change)
+				- security association changed (eg: subject not employed by the sponsoring org anymore)
+			- to verify authenticity / find revoked certs
+				- certificate revocation lists (CRLs)
+					- maintained by CAs
+					- contains serial numbers of revoked certs (+ date and time of revocation)
+					- con: must be downloaded and cross references periodically, so there's latency between revocation and when end users find out
+				- online certificate status protocol (OCSP)
+					- when receiving a cert, send an OCSP request to the CA's OCSP server to check cert's status
+					- removes CRL latency
+					- con: burden on OCSP servers
+				- certificate stapling
+					- extension to OCSP protocol
+					- instead of user requesting information about cert, the CA's own web server checks before sending it out and staples the OCSP response on it
+					- this response can last for n validity period (usually 24 hrs) and can be resent whenever new people visit the website, reducing the number of requests
+	- certificate formats
+		- DER format (distinguished encoding rules)
+			- most common binary format
+			- normally in files with .der, .crt, or .cer
+		- PEM format (privacy enhanced mail)
+			- text version of DER
+			- .pem or .crt
+		- PFX format (personal information exchange)
+			- binary format commonly used by windows
+			- .pfx or .p12
+		- p7b 
+			- also used by windows, which is in text
+			- .p7b
+- asymmetric key management
+	-  ensure your key has sufficient entropy
+	- rotate your keys
+	- hardware security modules (HSMs)
+		- store and manage encryption keys 
+		- ex: yubikey
+		- cloud based HSMs, like microsoft and amazon
+- cryptography attacks
+	- brute force
+	- frequency analysis
+		- looking for patterns that could represent language
+		- only works for historical ciphers
+	- known plain text
+		- if you have plain text, you can try to compare with ciphertext and find patterns
+	- chosen plain text
+		- similar to known plain text except you choose the plaintext and try to derive the key used
+	- related key attack
+		- obtain ciphertexts encrypted under 2 different keys  
+	- birthday attack
+		- attack on cryptographic hashes thru collision hashes
+	- downgrade attack
+		- try to get a user / system to shift to a less secure cryptographic mode 
+- hashing, salting, key stretching
+	- rainbow table attack: trying to reverse hashed password values by precomputing common password's hashes
+	- to defend against this, use salting: adding a random generated value to each password before hashing
+	- key stretching: creating encryption keys from passwords 
+		- algorithms use thousands of iterations of salting / hashing to generate encryption keys that are resilient
+- exploiting weak keys 
+- exploiting human error
+- tor / dark web
+	- users a set of relay nodes 
+	- has perfect forward secrecy: layers of encryption prevent nodes from reading info that they don't need
+- blockchain
+	- a distributed and immutable open public ledger
+	- something something crypto
+- lightweight cryptography
+	- specialized hardware can minimize power consumption + latency for cryptography
+- homomorphic encryption
+	- encrypts data in a way that still allows computation on it 
+- quantum computing
+
+
+in public key cryptography (asymmetric), the sender encrypts a message with the recipient's public key. then, the recipient decrypts it with their own private key.
