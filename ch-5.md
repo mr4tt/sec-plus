@@ -1,0 +1,211 @@
+## security assessment and testing
+
+- vulnerability management
+	- vulnerability scanning: detecting new vulns as they arise
+	- vuln management programs use vulnerability scanning, then implement a remediation workflow that addresses highest priority vulnerabilities
+	- identifying scan targets
+		- what is the data classification of the info stored / processed / transmitted by the system?
+		- is the system exposed to the internet / other networks?
+		- what services are offered by the system
+		- is the system a prod / test / development system?
+		- asset inventory: inventory of what devices / hosts are on the network 
+		- asset criticality: how critical is the system?
+	- identifying scan frequency
+		- risk appetite: how willing is an org to tolerate risk 
+		- regulatory requirements: some may have minimum frequency for vuln scans
+		- technical constraints: e.g.: a scan might only be able to scan n times per day
+		- business constraints: e.g.: no scanning during peak hours
+		- licensing limitations: e.g.: limited bandwidth for scans
+	- supplementing network scans
+		- scans may be inaccurate / prone to false positives from firewalls, IPS, etc
+		- thus, some have credentialed scans (the scanner can log into hosts)
+		- agent based scanning: installing small software agents on target servers, which then scan the server config 
+	- scan perspective
+		- each scan will scan from diff location on the network
+	- scanner maintenance
+		- ensure software and vulnerability feeds are up to date
+	- security content automation protocol (SCAP)
+		- a standardized approach for communicating security related info (from NIST)
+		- the standards include:
+			- common config enumeration (CCE): nomenclature for system config issues
+			- common platform enumeration (CPE): nomenclature for product names + versions
+			- common vulnerabilities and exposures (CVE): nomenclature for security related software flaws
+			- common vulnerability scoring system (CVSS): standard approach for measuring + describing severity of security related software flaws (rates 0-10)
+			- extensible configuration checklist description format (XCCDF): language for specifying checklist and reporting checklist results
+			- open vulnerability and assessment language (OVAL): language for specifying low level testing procedures used by checklists
+- vuln scanning tools
+	- infrastructure vuln scanning
+		- they reach out to systems on the network, attempt to determine the type of device and its config, and launch tests to find vulns
+		- types:
+			- nessus
+			- qualys vuln scanner
+			- rapid7's nexpose
+			- openVAS (open source)
+	- application testing
+		- static testing
+			- analyzes code w/o executing it 
+			- points devs at vulns and provides specific remediation suggestions
+		- dynamic testing
+			- executes code as part of the test, running all interfaces that the code exposes to the user with a variety of inputs
+		- interactive testing
+			- combines static and dynamic tests; analyzes source code while testers interact with the application through exposed interfaces
+	- web app scanning
+		- run network scans of web servers with detailed probing of web apps
+		- uses techniques like sending known malicious input sequences and fuzzing to break the application
+		- open source tools: Nikto, Arachni
+		- many orgs just use Nessus, Qualys, and Nexpose
+	- CVSS
+		- different metrics evaluate the CVSS score of a vuln
+		- attack vector metric (AV)
+			- describes how an attacker would exploit the vuln and is assigned according to:
+				- physical (P): does the attacker need to physically touch the device? 
+				- local (L): does the attacker need physical / logical access to the affected system? 
+				- adjacent (A): does the attacker need access to the local network the affected system is in?
+				- network (N): can the attacker exploit the vuln remotely?
+		- attack complexity metric (AC)
+			- describes difficulty of exploiting the vuln 
+				- does exploiting the vuln require "specialized" conditions that would be hard to find?
+					- Yes -> High (H), No -> Low (L)
+		- privileges required metric (PR)
+			- describes type of account access needed to exploit the vuln 
+				- do attackers require admin (High, H), basic user privileges (Low, L), or no auth necessary (None, N)?
+		- user interaction metric (UI)
+			- describes if the attacker needs to involve another human in the attack
+				- does successful exploitation require action by any other users?
+					- Yes -> Required (R), No -> None (N)
+		- confidentiality metric (C)
+			- describes type of info disclosure that could occur after a successful exploitation
+				- is there no confidentiality impact (None, N), some access to info (L), or all info is compromised (H)?
+		- integrity metric (I)
+			- describes type of information alteration that could occur 
+				- no integrity impact (N), some modification possible (L), or attacker can change any info at will (H)
+		- availability metric (A)
+			- describes the type of disruption that could occur 
+				- no availability impact (N), system performance is degraded (L), or system is shut down (H)
+		- scope metric (S)
+			- describes whether the vuln can affect system components beyond the vuln's scope
+				- can the vuln only affect resources managed by the same security authority?
+				- Yes -> Unchanged (U), No -> Changed (C)
+		- interpreting CVSS vector
+			- ex: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+				- made using CVSS version 3.0
+				- Attack Vector: Network (score: 0.85) 
+				- Attack Complexity: Low (score: 0.77) 
+				- Privileges Required: None (score: 0.85) 
+				- User Interaction: None (score: 0.85)
+				- Scope: Unchanged 
+				- Confidentiality: High (score: 0.56) 
+				- Integrity: None (score: 0.00) 
+				- Availability: None (score: 0.00)
+		- CVSS base score: single number representing overall risk from the vuln
+			- some sort of awful formula
+      - 0.0 -> No rating
+      - 0.1-3.9 -> Low
+      - 4.0-6.9 -> Medium
+      - 7.0-8.9 -> High
+      - 9.0-10.0 -> Critical
+	- confirmation of scan results
+		- false positives: make sure to verify
+		- reconciling scan results with other data sources
+			- cross check with log reviews, SIEM (security info and event management) systems, config management systems (these provide info on OS and apps installed on a system)
+- Vulnerability classification
+	- outdated / unpatched system vuln
+	- legacy platforms
+	- weak configs
+		- ex: use of default settings, open ports, default credentials, open permissions
+	- error messages
+		- debug mode on; could provide attackers with detailed internal info
+	- insecure protocols
+		- ex: Telnet (use ssh, the encrypted version)
+	- weak encryption
+- penetration testing: test an org's security controls
+	- threat hunting: similar, but search for artifacts of a successful attack
+	- types of pen testing
+		- physical 
+			- finding vulns in physical security controls (breaking into buildings, compromising surveillance, etc)
+		- offensive
+			- simulate real world cyber attacks and find vulns in networks / systems / applications
+		- defensive
+			- evaluate org's ability to defense against cyberattacks
+			- assess effectiveness of security policies, procedures, and tech in detecting and mitigating threats
+		- integrated
+			- combined offensive + defensive for a very comprehensive view
+	- how much knowledge will pentesters have?
+		- known environment tests
+			- tests performed w/ full knowledge of tech / configs / settings 
+				- will have info like network diagrams, lists of systems, ip ranges, credentials 
+		- unknown environment tests
+			- tests replicate what an attacker would encounter
+		- partially known environment tests
+			- provide some info
+	- rules of engagement
+		- timeline
+		- what locations / systems / aplications / other targets are included or excluded
+		- data handling requirements (esp for sensitive info)
+		- behaviors to expect from the target (what defenses are there?)
+		- what resources are committed? (will devs / sysadmins be monitoring the whole time? who will be watching?)
+		- legal concerns
+		- when and how communications occur
+	- pentesting stages
+		- reconnaissance phase
+			- gather info about the target
+			- passive reconnaissance: gathering info w/o directly engaging with the target
+				- ex: DNS / WHOIS queries, googling, reviewing public websites, war driving (driving by facility to try to connect to wireless networks), war flying (same thing w/ drones)
+			- active reconnaissance: gathering info by engaging with the target
+				- port scanning, footprinting to identify OS / apps used, vuln scanning
+		- running the test
+			- initial access
+			- privilege escalation
+			- pivoting / lateral movement
+			- persistence
+			- exploitation frameworks, like metasploit, simplify finding vulns modularly 
+		- cleaning up
+			- remove installed tools, persistence mechanisms, writing reports
+	- audits and assessments 
+		- security tests
+			- verify a control is working properly 
+			- include automated scans, tool assisted pen tests
+		- security assessments 
+			- comprehensive reviews of the security of a system / app / environment
+			- include security tests + review of threat environment, current / future risks, and value of the target
+		- security audits 
+			- security assessments run by independent auditors 
+			- reports are intended for a third party, like govt regulators or an org's board of directors
+			- internal audits
+				- performed by an org's internal audit staff, intended for internal audiences
+			- external audits
+				- performed by outside auditing firm who serves an independent third party
+				- main audit firms:
+					- EY, deloitte, PwC, KPMG
+			- independent third party audits
+				- conducted by or on behalf of another org, e.g.: a regulatory body
+				- service organization controls (SOC) audits: SSAE 18 engagements
+					- SSAE 18 is a common standard for auditors
+			- auditing standards
+				- COBIT is a common standard
+				- there are others and i will not remember any of them 
+					- "ISO 27001 describes a standard approach for setting up an information security management system, while ISO 27002 goes into more detail on the specifics of information security controls."
+	- vulnerability life cycle 
+		- Identification -> Analysis -> Response and Remediation -> Validation of Remediation -> Reporting -> Identification (loops)
+		- vulnerability identification
+			- org becomes aware of a vuln 
+			- can come from:
+				- vuln scans
+				- pentests
+				- reports from responsible disclosure / bug bounty programs
+				- audit results 
+		- vulnerability analysis
+			- ex: confirming vuln exists
+			- prioritizing / categorizing the vuln (ex: CVSS, CVE)
+			- supplementing external analysis w/ org specific details, like exposure factor to the vuln, environmental variables, risk tolerance
+		- vulnerability response and remediation
+			- identify vulns most in need of remediation
+			- response to vuln with:
+				- apply patches
+				- isolate affected system w/ network segmentation
+				- implement compensating controls (ex: firewalls, IPS)
+				- buy insurance
+		- validation of remediation
+			- validate the vuln is gone
+		- reporting
+			- communicate findings, actions taken, lessons learned
