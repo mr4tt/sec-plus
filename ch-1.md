@@ -43,7 +43,7 @@
 	- gap analysis
 		- during a gap analysis, review control objectives for an org / system / service and examine controls designed to achieve those objectives 
 			- gap: when controls do not meet control objective 
-	- $\star$ security control categories
+	- security control categories
 		- technical controls
 			- ex: ACLs, firewall rules, encryption
 		- operational controls
@@ -52,7 +52,7 @@
 			- ex: risk assessments, security planning exercises, project management practices
 		- physical controls
 			- ex: fences, locks, alarms
-	- $\star$ security control types
+	- security control types
 		- preventive controls
 			- stop security issues before occurring
 			- ex: firewalls, encryption

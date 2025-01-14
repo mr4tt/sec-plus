@@ -67,7 +67,7 @@
 			- macro viruses 
 				- use macros / code inside software to spread (ex: word, excel)
 			- email viruses
-				- spread via email (either as email attachments or part of the email itself through email client flaws
+				- spread via email (either as email attachments or part of the email itself through email client flaws)
 		- fileless viruses inject themselves into memory and do stuff, including adding the ability to reinfect the system via the same process at reboot through a registry entry or other technique 
 		- IoC
 			- available in threat feeds from orgs like VirusTotal
